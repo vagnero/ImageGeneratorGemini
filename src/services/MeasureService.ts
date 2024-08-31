@@ -124,39 +124,38 @@ export class MeasureService {
               await fs.promises.writeFile(tempImagePath, buffer);
               console.log('Buffer size:', buffer.length);
           
-              // Faz o upload da imagem para a API do Google Gemini
-              // const uploadResponse = await fileManager.uploadFile(tempImagePath, {
-              //   mimeType: "image/jpeg",
-              //   displayName: "Uploaded image",
-              // });
+              //Faz o upload da imagem para a API do Google Gemini
+              const uploadResponse = await fileManager.uploadFile(tempImagePath, {
+                mimeType: "image/jpeg",
+                displayName: "Uploaded image",
+              });
           
-              // Remove o arquivo temporário após o upload
-              //fs.unlinkSync(tempImagePath);
+              //Remove o arquivo temporário após o upload
+              fs.unlinkSync(tempImagePath);
       
-              // Gera o conteúdo baseado na imagem enviada
-              // const result = await model.generateContent([
-              //   {
-              //     fileData: {
-              //       mimeType: uploadResponse.file.mimeType,
-              //       fileUri: uploadResponse.file.uri,
-              //     },
-              //   },
-              //   { text: "Me dê o valor da medição que está nesse medidor" },
-              // ]);
+              //Gera o conteúdo baseado na imagem enviada
+              const result = await model.generateContent([
+                {
+                  fileData: {
+                    mimeType: uploadResponse.file.mimeType,
+                    fileUri: uploadResponse.file.uri,
+                  },
+                },
+                { text: "Me dê o valor da medição que está nesse medidor" },
+              ]);
           
-              // const responseText = await result.response.text();
+              const responseText = await result.response.text();
       
-              // console.log(responseText);
+              console.log(responseText);
       
-              // // Expressão regular para encontrar o primeiro número na resposta
-              // const match = responseText.match(/\d+/);
-              // if (match) {
-              //     return parseInt(match[0], 10);
-              // } else {
-              //     console.error('Nenhum número encontrado na resposta.');
-              //     return -1;
-              // }
-              return -1
+              // Expressão regular para encontrar o primeiro número na resposta
+              const match = responseText.match(/\d+/);
+              if (match) {
+                  return parseInt(match[0], 10);
+              } else {
+                  console.error('Nenhum número encontrado na resposta.');
+                  return -1;
+              }
             } catch (error) {
               console.error('Error generating content:', error);
               return -1;
