@@ -10,7 +10,7 @@ export default class MeasureController{
         try {
             const {image, customer_code, measure_datetime, measure_type} = req.body;
             const customer = new Customer(customer_code);
-            const value = (await MeasureService.generateImageValue(image)).valueOf();
+            let value = await MeasureService.generateImageValue(image);
             const guid = await MeasureService.generateGuidImage(image);
             const measure = new Measure(uuidv4(), measure_datetime, measure_type, guid, value, false, customer);
             

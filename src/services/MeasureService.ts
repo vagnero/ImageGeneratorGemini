@@ -4,7 +4,8 @@ import Customer from "../models/Customer";
 import Measure from "../models/Measure";
 import { DoubleReportException } from "../exceptions/DoubleReportException";
 import { v4 as uuidv4 } from 'uuid';
-import * as fs from 'fs';
+const fs = require('fs');
+
 import { GoogleAIFileManager } from "@google/generative-ai/server";
 import { GoogleGenerativeAI } from '@google/generative-ai';
 require('dotenv').config();
@@ -12,6 +13,11 @@ import path from 'path';
 import { InvalidDataException } from "../exceptions/InvalidDataException";
 import { MeasureNotFoundException } from "../exceptions/MeasureNotFoundException";
 import { ConfirmationDuplicateException } from "../exceptions/ConfirmationDuplicateException";
+
+const tempImageDir = path.resolve(__dirname, '../assets');
+if (!fs.existsSync(tempImageDir)) {
+  fs.mkdirSync(tempImageDir, { recursive: true });
+}
 
 
 const port = process.env.PORT;
@@ -98,7 +104,7 @@ export class MeasureService {
           }
     }
 
-    static async generateImageValue(base64str: string): Promise<Number>{
+    static async generateImageValue(base64str: string): Promise<number>{
         
         try {
       
@@ -109,43 +115,48 @@ export class MeasureService {
         
               // Converte o valor base64 em um buffer de imagem
               const buffer = Buffer.from(base64str, 'base64');
+              if (buffer.length === 0) {
+                throw new Error('O buffer gerado está vazio');
+            }
       
               // Gera uma imagem com uma data
-              const tempImagePath = path.resolve(__dirname, '../assets/temp_image_' + Date.now() + '.jpg');
-              fs.writeFileSync(tempImagePath, buffer);
+              const tempImagePath = path.join(tempImageDir, 'temp_image_' + Date.now() + '.jpg');
+              await fs.promises.writeFile(tempImagePath, buffer);
+              console.log('Buffer size:', buffer.length);
           
               // Faz o upload da imagem para a API do Google Gemini
-              const uploadResponse = await fileManager.uploadFile(tempImagePath, {
-                mimeType: "image/jpeg",
-                displayName: "Uploaded image",
-              });
+              // const uploadResponse = await fileManager.uploadFile(tempImagePath, {
+              //   mimeType: "image/jpeg",
+              //   displayName: "Uploaded image",
+              // });
           
               // Remove o arquivo temporário após o upload
               //fs.unlinkSync(tempImagePath);
       
               // Gera o conteúdo baseado na imagem enviada
-              const result = await model.generateContent([
-                {
-                  fileData: {
-                    mimeType: uploadResponse.file.mimeType,
-                    fileUri: uploadResponse.file.uri,
-                  },
-                },
-                { text: "Me dê o valor da medição que está nesse medidor" },
-              ]);
+              // const result = await model.generateContent([
+              //   {
+              //     fileData: {
+              //       mimeType: uploadResponse.file.mimeType,
+              //       fileUri: uploadResponse.file.uri,
+              //     },
+              //   },
+              //   { text: "Me dê o valor da medição que está nesse medidor" },
+              // ]);
           
-              const responseText = await result.response.text();
+              // const responseText = await result.response.text();
       
-              console.log(responseText);
+              // console.log(responseText);
       
-              // Expressão regular para encontrar o primeiro número na resposta
-              const match = responseText.match(/\d+/);
-              if (match) {
-                  return parseInt(match[0], 10);
-              } else {
-                  console.error('Nenhum número encontrado na resposta.');
-                  return -1;
-              }
+              // // Expressão regular para encontrar o primeiro número na resposta
+              // const match = responseText.match(/\d+/);
+              // if (match) {
+              //     return parseInt(match[0], 10);
+              // } else {
+              //     console.error('Nenhum número encontrado na resposta.');
+              //     return -1;
+              // }
+              return -1
             } catch (error) {
               console.error('Error generating content:', error);
               return -1;
