@@ -5,9 +5,9 @@ services:
     image: postgres:13
     container_name: postgres_db
     environment:
-      POSTGRES_USER: example_user
-      POSTGRES_PASSWORD: example_password
-      POSTGRES_DB: example_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: teste_shopper
     ports:
       - "5432:5432"
     volumes:
@@ -23,7 +23,7 @@ services:
     depends_on:
       - postgres_db
     environment:
-      DATABASE_URL: "postgresql://example_user:example_password@postgres_db:5432/example_db"
+      DATABASE_URL: "postgresql://postgres:1234@localhost:5432/teste_shopper"
 
 volumes:
   postgres_data:
