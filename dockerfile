@@ -10,8 +10,15 @@ COPY package*.json ./
 # Instalar as dependências do projeto
 RUN npm install
 
+
+# Copiar os arquivos do prisma
+COPY prisma ./prisma/
+
 # Copiar todos os arquivos do projeto para o diretório de trabalho
 COPY . .
+
+# Gere o Prisma Client
+RUN npx prisma generate
 
 # Compilar os arquivos TypeScript
 RUN npm run build
