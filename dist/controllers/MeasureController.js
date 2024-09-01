@@ -49,5 +49,21 @@ class MeasureController {
             }
         });
     }
+    getMeasures(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { customer_code } = req.params; // Obtém o código do cliente dos parâmetros da URL
+            const measureType = req.query.measure_type; // Obtém o tipo de medição dos parâmetros da query
+            try {
+                const result = yield MeasureService_1.MeasureService.listMeasures(customer_code, measureType);
+                res.status(result.status_code).json(result);
+            }
+            catch (error) {
+                res.status(500).json({
+                    status_code: 500,
+                    message: error,
+                });
+            }
+        });
+    }
 }
 exports.default = MeasureController;

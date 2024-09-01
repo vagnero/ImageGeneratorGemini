@@ -5,7 +5,8 @@ const measureRouter = Router();
 import MeasureController from '../controllers/MeasureController';
 const controller = new MeasureController();
 measureRouter.post("/upload" ,controller.create);
-measureRouter.patch("/confirm", controller.update)
+measureRouter.patch("/confirm", controller.update);
+measureRouter.get('/:customer_code/list',controller.getMeasures);
 
 measureRouter.get('/image/:id', (req, res) => {
   const imageId = req.params.id;

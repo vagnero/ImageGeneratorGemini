@@ -76,14 +76,16 @@ export class MeasureRepository{
       try {
           const query: any = {
               where: {
-                  customerCode: customerCode,
+                  customer: {
+                      customer_code: customerCode, // Referencia o customer_code no modelo Customer
+                  },
               },
           };
-
+  
           if (measureType) {
               query.where.measureType = measureType;
           }
-
+  
           const measures = await prisma.measure.findMany(query);
           return measures;
       } catch (error) {

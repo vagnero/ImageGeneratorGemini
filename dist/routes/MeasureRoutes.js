@@ -10,6 +10,7 @@ const MeasureController_1 = __importDefault(require("../controllers/MeasureContr
 const controller = new MeasureController_1.default();
 measureRouter.post("/upload", controller.create);
 measureRouter.patch("/confirm", controller.update);
+measureRouter.get('/:customer_code/list', controller.getMeasures);
 measureRouter.get('/image/:id', (req, res) => {
     const imageId = req.params.id;
     const imageBuffer = imageCache_1.imageCache.get(imageId);

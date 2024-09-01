@@ -37,4 +37,18 @@ export default class MeasureController{
         }
     }
 
+    public async getMeasures(req: Request, res: Response): Promise<any> {
+        const { customer_code } = req.params; // Obtém o código do cliente dos parâmetros da URL
+        const measureType = req.query.measure_type as string; // Obtém o tipo de medição dos parâmetros da query
+    
+        try {
+            const result = await MeasureService.listMeasures(customer_code, measureType);
+            res.status(result.status_code).json(result);
+        } catch (error) {
+            res.status(500).json({
+                status_code: 500,
+                message: error,
+            });
+        }
+    }
 }

@@ -79,7 +79,9 @@ class MeasureRepository {
             try {
                 const query = {
                     where: {
-                        customerCode: customerCode,
+                        customer: {
+                            customer_code: customerCode, // Referencia o customer_code no modelo Customer
+                        },
                     },
                 };
                 if (measureType) {

@@ -9,12 +9,6 @@ Para rodar o projeto usando Docker, siga estes passos:
     PORT=3000
     GEMINI_KEY=your_gemini_key
 
-    DB_DIALECT=postgres
-    DB_HOST=localhost
-    DB_USERNAME=your_db_username
-    DB_PASSWORD=your_db_password
-    DB_DATABASE=your_db_name
-
     DATABASE_URL=postgres://your_db_username:your_db_password@localhost:5432/your_db_name
     ```
 
@@ -32,12 +26,6 @@ Para rodar o projeto diretamente na IDE, siga estes passos:
     PORT=3000
     GEMINI_KEY=your_gemini_key
 
-    DB_DIALECT=postgres
-    DB_HOST=localhost
-    DB_USERNAME=your_db_username
-    DB_PASSWORD=your_db_password
-    DB_DATABASE=your_db_name
-
     DATABASE_URL=postgres://your_db_username:your_db_password@localhost:5432/your_db_name
     ```
 
@@ -48,8 +36,3 @@ Para rodar o projeto diretamente na IDE, siga estes passos:
     npx prisma generate        # Gera o Prisma Client atualizado
     npm start                  # Inicia o projeto
     ```
-
-### Notas
-
-- Certifique-se de substituir os valores no arquivo `.env` pelos valores apropriados para seu ambiente de desenvolvimento ou produção.
-- O arquivo `.env` deve ser mantido em segredo e não deve ser incluído em controle de versão (como Git). Considere adicionar um arquivo `.env.example` com valores de exemplo para orientar outros desenvolvedores.

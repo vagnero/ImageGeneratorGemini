@@ -70,6 +70,7 @@ class MeasureService {
                 if (measureType) {
                     const validTypes = ["WATER", "GAS"];
                     if (!validTypes.includes(measureType.toUpperCase())) {
+                        throw new Error(`Invalid measure type: ${measureType}`);
                     }
                 }
                 // Filtra medidas do cliente pelo código e tipo opcional
@@ -82,7 +83,10 @@ class MeasureService {
             catch (error) {
                 // Trata erros e os retorna
                 console.error(error);
-                throw error;
+                return {
+                    status_code: 500,
+                    message: error,
+                };
             }
         });
     }

@@ -64,12 +64,13 @@ export class MeasureService {
             if (measureType) {
                 const validTypes = ["WATER", "GAS"];
                 if (!validTypes.includes(measureType.toUpperCase())) {
+                    throw new Error(`Invalid measure type: ${measureType}`);
                 }
             }
-
+    
             // Filtra medidas do cliente pelo código e tipo opcional
             const measures = await MeasureRepository.findByCustomerCode(customerCode, measureType ? measureType.toUpperCase() : undefined);
-
+    
             return {
                 status_code: 200,
                 data: measures,
@@ -77,7 +78,10 @@ export class MeasureService {
         } catch (error) {
             // Trata erros e os retorna
             console.error(error);
-            throw error;
+            return {
+                status_code: 500,
+                message: error,
+            };
         }
     }
 
