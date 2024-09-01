@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -40,7 +17,7 @@ const MeasureRepository_1 = require("../repositories/MeasureRepository");
 const imageCache_1 = require("../cache/imageCache");
 const DoubleReportException_1 = require("../exceptions/DoubleReportException");
 const uuid_1 = require("uuid");
-const fs = __importStar(require("fs"));
+const fs = require('fs');
 const server_1 = require("@google/generative-ai/server");
 const generative_ai_1 = require("@google/generative-ai");
 require('dotenv').config();
@@ -48,6 +25,10 @@ const path_1 = __importDefault(require("path"));
 const InvalidDataException_1 = require("../exceptions/InvalidDataException");
 const MeasureNotFoundException_1 = require("../exceptions/MeasureNotFoundException");
 const ConfirmationDuplicateException_1 = require("../exceptions/ConfirmationDuplicateException");
+const tempImageDir = path_1.default.resolve(__dirname, '../assets');
+if (!fs.existsSync(tempImageDir)) {
+    fs.mkdirSync(tempImageDir, { recursive: true });
+}
 const port = process.env.PORT;
 const key = process.env.GEMINI_KEY || "faield";
 const genAI = new generative_ai_1.GoogleGenerativeAI(key);
@@ -136,17 +117,21 @@ class MeasureService {
                 });
                 // Converte o valor base64 em um buffer de imagem
                 const buffer = Buffer.from(base64str, 'base64');
+                if (buffer.length === 0) {
+                    throw new Error('O buffer gerado está vazio');
+                }
                 // Gera uma imagem com uma data
-                const tempImagePath = path_1.default.resolve(__dirname, '../assets/temp_image_' + Date.now() + '.jpg');
-                fs.writeFileSync(tempImagePath, buffer);
-                // Faz o upload da imagem para a API do Google Gemini
+                const tempImagePath = path_1.default.join(tempImageDir, 'temp_image_' + Date.now() + '.jpg');
+                yield fs.promises.writeFile(tempImagePath, buffer);
+                console.log('Buffer size:', buffer.length);
+                //Faz o upload da imagem para a API do Google Gemini
                 const uploadResponse = yield fileManager.uploadFile(tempImagePath, {
                     mimeType: "image/jpeg",
                     displayName: "Uploaded image",
                 });
-                // Remove o arquivo temporário após o upload
-                //fs.unlinkSync(tempImagePath);
-                // Gera o conteúdo baseado na imagem enviada
+                //Remove o arquivo temporário após o upload
+                fs.unlinkSync(tempImagePath);
+                //Gera o conteúdo baseado na imagem enviada
                 const result = yield model.generateContent([
                     {
                         fileData: {

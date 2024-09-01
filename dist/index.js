@@ -10,7 +10,7 @@ require('dotenv').config();
 const port = process.env.PORT;
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 app.use(body_parser_1.default.json());
-const MeasureRoutes_1 = __importDefault(require("./src/routes/MeasureRoutes"));
+const MeasureRoutes_1 = __importDefault(require("./routes/MeasureRoutes"));
 app.use(MeasureRoutes_1.default);
 app.listen(port, () => {
     console.log(`Example app listening on http://localhost:${port}`);

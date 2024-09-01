@@ -23,7 +23,7 @@ class MeasureController {
             try {
                 const { image, customer_code, measure_datetime, measure_type } = req.body;
                 const customer = new Customer_1.default(customer_code);
-                const value = (yield MeasureService_1.MeasureService.generateImageValue(image)).valueOf();
+                let value = yield MeasureService_1.MeasureService.generateImageValue(image);
                 const guid = yield MeasureService_1.MeasureService.generateGuidImage(image);
                 const measure = new Measure_1.default((0, uuid_1.v4)(), measure_datetime, measure_type, guid, value, false, customer);
                 //Cria o cliente no banco de dados

@@ -9,7 +9,7 @@ import { GoogleAIFileManager } from "@google/generative-ai/server";
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import measureRouter from './src/routes/MeasureRoutes';
+import measureRouter from './routes/MeasureRoutes';
 
 app.use(measureRouter);
 
